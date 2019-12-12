@@ -1,14 +1,11 @@
 // NOTE: The contents of this file will only be executed if
-// you uncomment its entry in "assets/js/app.js".
+// you uncomment its entry in "web/static/js/app.js".
 
-// To use Phoenix channels, the first step is to import Socket,
-// and connect at the socket path in "lib/web/endpoint.ex".
-//
-// Pass the token on params as below. Or remove it
-// from the params if you are not using authentication.
-import {Socket} from "phoenix"
+// To use Phoenix channels, the first step is to import Socket
+// and connect at the socket path in "lib/my_app/endpoint.ex":
+import { Socket } from "phoenix"
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+let socket = new Socket("/socket", { params: { token: window.userToken } })
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -16,7 +13,7 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 // If the current user exists you can assign the user's token in
 // the connection for use in the layout.
 //
-// In your "lib/web/router.ex":
+// In your "web/router.ex":
 //
 //     pipeline :browser do
 //       ...
@@ -34,14 +31,14 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 //     end
 //
 // Now you need to pass this token to JavaScript. You can do so
-// inside a script tag in "lib/web/templates/layout/app.html.eex":
+// inside a script tag in "web/templates/layout/app.html.eex":
 //
 //     <script>window.userToken = "<%= assigns[:user_token] %>";</script>
 //
-// You will need to verify the user token in the "connect/3" function
-// in "lib/web/channels/user_socket.ex":
+// You will need to verify the user token in the "connect/2" function
+// in "web/channels/user_socket.ex":
 //
-//     def connect(%{"token" => token}, socket, _connect_info) do
+//     def connect(%{"token" => token}, socket) do
 //       # max_age: 1209600 is equivalent to two weeks in seconds
 //       case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do
 //         {:ok, user_id} ->
@@ -51,7 +48,9 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 //       end
 //     end
 //
-// Finally, connect to the socket:
+// Finally, pass the token on connect as below. Or remove it
+// from connect if you don't care about authentication.
+
 socket.connect()
 
 // Now that you are connected, you can join channels with a topic:
@@ -61,3 +60,53 @@ channel.join()
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 export default socket
+
+
+var loginBtn = document.getElementById("loginBtn");
+loginBtn.addEventListener('click', function test(params) {
+  login();
+});
+
+var logoutBtn = document.getElementById("logoutBtn");
+logoutBtn.addEventListener('click', function test(params) {
+  logout();
+});
+
+function showDashboard() {
+  var dashboard = document.getElementById("dashboardContainer");
+  var login = document.getElementById("loginContainer");
+  login.style.display = "none";
+  dashboard.style.display = "block";
+}
+
+function showLogin() {
+  var dashboard = document.getElementById("dashboardContainer");
+  dashboard.style.display = "none";
+  var login = document.getElementById("loginContainer");
+  login.style.display = "block";
+  document.getElementById("username").value = "";
+  document.getElementById("pwd").value = "";
+}
+
+function login() {
+  var value = validateLogin();
+  if (value == "invalid")
+    alert("Username and Password cannot be empty");
+  else {
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("pwd").value
+    channel.push("login", { username, password });
+  }
+}
+function logout() {
+  showLogin();
+}
+
+function validateLogin() {
+  var username = document.getElementById("username").value;
+  var password = document.getElementById("pwd").value;
+  if (username == undefined || password == undefined || username == "" || password == "") {
+    return "invalid";
+  }
+}
+
