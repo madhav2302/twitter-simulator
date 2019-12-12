@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body style="background-color:#DEEAF3;align:center">
-<div class="container-full" style="color:white;">
+<div class="container-fluid" style="color:white;">
 <div class="container-fluid" id="loginContainer" style="background-color:#8AC6F4;">
   <center><h2><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
   <p class="lead"></p>
