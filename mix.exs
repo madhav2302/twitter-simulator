@@ -4,7 +4,7 @@ defmodule TwitterSimulator.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      start_permanent: Mix.env() == :prod,
+      start_permanent: Mix.env() == :dev,
       deps: deps()
     ]
   end

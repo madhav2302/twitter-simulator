@@ -7,7 +7,7 @@ defmodule TwitterSimulator.Application do
 
   def start(_type, _args) do
     children = [
-      # TwitterSimulator.Worker
+      TwitterSimulator.Server
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: TwitterSimulator.Supervisor)

@@ -4,6 +4,14 @@
 </section>
 
 <section class="row">
+    <article class="column">
+      <input id = "username" placeholder = "Username" type="text" />
+      <input id = "password" placeholder = "Password" type="password" />
+      <button id = "login" type="button">Login</button>
+      <button id = "signup" type="button">SignUp</button>
+    </article>
+</section>
+<section class="row">
   <article class="column">
     <h2>Resources</h2>
     <ul>
