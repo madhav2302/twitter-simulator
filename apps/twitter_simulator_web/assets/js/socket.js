@@ -92,7 +92,7 @@ function login() {
   else {
     var username = document.getElementById("username").value;
     var password = document.getElementById("pwd").value
-    channel.push("login", { username, password });
+    channel.push("login_user", { username, password });
   }
 }
 function logout() {
