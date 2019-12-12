@@ -22,14 +22,23 @@ channel.join()
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 $(document).ready(function () {
-  $("#login").click(function () {
+  var login = $("#login")
+  var signup = $("#signup")
+  var dashboardContainer = $("#dashboardContainer")
+  var loginContainer = $("#loginContainer")
+
+  //   login.style.display = "none";
+  //   dashboard.style.display = "block";
+
+  login.click(function () {
     let username = $("#username").val()
     let password = $("#password").val()
     if (username && password) {
       channel.push("login_user", { user: username, password: password })
         .receive("ok", resp => {
           console.log(resp["message"])
-          window.userToken = username
+          loginContainer.css('display', 'none')
+          dashboardContainer.css('display', 'block')
         })
         .receive("error", resp => { alert(resp["message"]) })
     } else {
@@ -37,7 +46,7 @@ $(document).ready(function () {
     }
   })
 
-  $("#signup").click(function () {
+  signup.click(function () {
     let username = $("#username").val()
     let password = $("#password").val()
     if (username && password) {

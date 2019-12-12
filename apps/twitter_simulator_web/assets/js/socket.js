@@ -59,51 +59,51 @@ socket.connect()
 export default socket
 
 
-var loginBtn = document.getElementById("loginBtn");
-loginBtn.addEventListener('click', function test(params) {
-  login();
-});
+// var loginBtn = document.getElementById("loginBtn");
+// loginBtn.addEventListener('click', function test(params) {
+//   login();
+// });
 
-var logoutBtn = document.getElementById("logoutBtn");
-logoutBtn.addEventListener('click', function test(params) {
-  logout();
-});
+// var logoutBtn = document.getElementById("logoutBtn");
+// logoutBtn.addEventListener('click', function test(params) {
+//   logout();
+// });
 
-function showDashboard() {
-  var dashboard = document.getElementById("dashboardContainer");
-  var login = document.getElementById("loginContainer");
-  login.style.display = "none";
-  dashboard.style.display = "block";
-}
+// function showDashboard() {
+//   var dashboard = document.getElementById("dashboardContainer");
+//   var login = document.getElementById("loginContainer");
+//   login.style.display = "none";
+//   dashboard.style.display = "block";
+// }
 
-function showLogin() {
-  var dashboard = document.getElementById("dashboardContainer");
-  dashboard.style.display = "none";
-  var login = document.getElementById("loginContainer");
-  login.style.display = "block";
-  document.getElementById("username").value = "";
-  document.getElementById("pwd").value = "";
-}
+// function showLogin() {
+//   var dashboard = document.getElementById("dashboardContainer");
+//   dashboard.style.display = "none";
+//   var login = document.getElementById("loginContainer");
+//   login.style.display = "block";
+//   document.getElementById("username").value = "";
+//   document.getElementById("pwd").value = "";
+// }
 
-function login() {
-  var value = validateLogin();
-  if (value == "invalid")
-    alert("Username and Password cannot be empty");
-  else {
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("pwd").value
-    channel.push("login_user", { username, password });
-  }
-}
-function logout() {
-  showLogin();
-}
+// function login() {
+//   var value = validateLogin();
+//   if (value == "invalid")
+//     alert("Username and Password cannot be empty");
+//   else {
+//     var username = document.getElementById("username").value;
+//     var password = document.getElementById("pwd").value
+//     channel.push("login", { username, password });
+//   }
+// }
+// function logout() {
+//   showLogin();
+// }
 
-function validateLogin() {
-  var username = document.getElementById("username").value;
-  var password = document.getElementById("pwd").value;
-  if (username == undefined || password == undefined || username == "" || password == "") {
-    return "invalid";
-  }
-}
+// function validateLogin() {
+//   var username = document.getElementById("username").value;
+//   var password = document.getElementById("pwd").value;
+//   if (username == undefined || password == undefined || username == "" || password == "") {
+//     return "invalid";
+//   }
+// }
 

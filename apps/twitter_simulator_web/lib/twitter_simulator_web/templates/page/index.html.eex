@@ -18,12 +18,12 @@
     <input type="text" class="form-control" placeholder="Enter username" id="username" required="true" />
     <br>
     <label for="pwd">Password</label>
-    <input type="password" class="form-control" placeholder="Enter password" id="pwd" required="true" />
+    <input type="password" class="form-control" placeholder="Enter password" id="password" required="true" />
   </form>
   <br/> <br/>
-  <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+  <button type="submit" class="btn btn-primary" id="login">Login</button>
+  <button type="submit" class="btn btn-primary" id="signup">Sign Up</button>
   <br/> <br/>
-  <a href="/signup" style="color:white;">Create an Account</a>
 </form>
 </div>
 
