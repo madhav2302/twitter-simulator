@@ -1,35 +1,72 @@
-<section class="phx-hero">
-  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
-  <p>A productive web framework that<br/>does not compromise speed or maintainability.</p>
-</section>
+<!DOCTYPE html>
+<html>
+<head>
+<title>HomePage</title>
+</head>
+<body style="background-color:#DEEAF3;align:center">
+<div class="container" height="100%" width="100%" style="color:white">
+<div id="loginContainer" style="background-color:#8AC6F4;">
+  <center><h2><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
+  <p class="lead"></p>
+  <img class="img-responsive" src="https://pbs.twimg.com/profile_images/1111729635610382336/_65QFl7B.png" height="100" width="100">
+  <br><br>
+  <center>  <span> <p> Allows user registration, login and posting tweets and retweets and following other users. <br>
+  </p> </span>
+  <br>
+  <form class="form-group">
+    <label for="text">Username</label>
+    <input type="text" class="form-control" placeholder="Enter username" id="username" required="true" />
+    <br>
+    <label for="pwd">Password</label>
+    <input type="password" class="form-control" placeholder="Enter password" id="pwd" required="true" />
+  </form>
+  <br/> <br/>
+  <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+  <br/> <br/>
+  <a href="/signup" style="color:white;">Create an Account</a>
+</form>
+</div>
 
-<section class="row">
-  <article class="column">
-    <h2>Resources</h2>
-    <ul>
-      <li>
-        <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix/blob/v1.4/CHANGELOG.md">v1.4 Changelog</a>
-      </li>
-    </ul>
-  </article>
-  <article class="column">
-    <h2>Help</h2>
-    <ul>
-      <li>
-        <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
-      </li>
-      <li>
-        <a href="https://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on Freenode IRC</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
-      </li>
-    </ul>
-  </article>
-</section>
+<!-- DASHBOARD -->
+<div id="dashboardContainer" class="row" class="container text-black" style="background-color:#8AC6F4;display:none">
+<center><h2><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
+ <button type="submit" class="btn btn-primary" id="logoutBtn" onclick="logout()">Logout</button>
+  <br/>
+  <div class="col-sm-4">
+    <h3> <%= gettext "Welcome User"%></h3>
+    <br/>
+    <h4> Follow Another User </h4>
+    <input class="form-control" type="text" id="followerBox" placeholder="Enter the username" required /><br/>
+     <button type="submit" class="btn btn-primary" id="followBtn">Follow User</button><br/><br/>
+
+     <h4> Search tweets by Hashtags </h4>
+    <input class="form-control" type="text" id="hashtagBox" placeholder="Enter the hashtag" required /><br/>
+     <button type="submit" class="btn btn-primary" id="hashtagBtn">Search Tweets</button><br/><br/>
+    <div class="jumbotron" style="overflow:auto">
+      <table class = "table-borderless" id="feedTable">
+      </table>
+    </div>
+
+     <h4> Search tweets by Mentions </h4>
+    <input class="form-control" type="text" id="mentionBox" placeholder="Enter the mention" required /><br/>
+     <button type="submit" class="btn btn-primary" id="hashtagBtn">Search Tweets</button><br/>
+    <div class="jumbotron" style="overflow:auto">
+      <table class = "table-borderless" id="feedTable" style="">
+      </table>
+    </div>
+  </div>
+  <div id="feedContainer" class="col-sm-8">
+    <br/>
+    <textarea class="form-control" id="tweetBox" rows="4" cols="50" placeholder="What's on your mind"></textarea><br/>
+    <button type="submit" class="btn btn-primary" id="tweetBtn">Post Tweet</button>
+    <br/><br/>
+    <h4> Feed </h4> <br>
+    <div class="jumbotron" style="overflow:auto">
+      <table class = "table-borderless" id="feedTable" style="height:450px;">
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>
