@@ -5,8 +5,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body style="background-color:#DEEAF3;align:center">
-<div class="container" height="100%" width="100%" style="color:white">
-<div id="loginContainer" style="background-color:#8AC6F4;">
+<div class="container-full" style="color:white;">
+<div class="container-fluid" id="loginContainer" style="background-color:#8AC6F4;">
   <center><h2><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
   <p class="lead"></p>
   <img class="img-responsive" src="https://pbs.twimg.com/profile_images/1111729635610382336/_65QFl7B.png" height="100" width="100">
@@ -29,9 +29,9 @@
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboardContainer" class="row" class="container text-black" style="background-color:#8AC6F4;display:none">
+<div id="dashboardContainer" class="row container-fluid text-black" style="background-color:#8AC6F4;display:none;">
 <center><h2><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
- <button type="submit" class="btn btn-primary" id="logoutBtn" onclick="logout()">Logout</button>
+ <button type="submit" class="btn btn-primary" id="logoutBtn">Logout</button>
   <br/>
   <div class="col-sm-4">
     <h3> <%= gettext "Welcome User"%></h3>
@@ -44,15 +44,15 @@
     <input class="form-control" type="text" id="hashtagBox" placeholder="Enter the hashtag" required /><br/>
      <button type="submit" class="btn btn-primary" id="hashtagBtn">Search Tweets</button><br/><br/>
     <div class="jumbotron" style="overflow:auto">
-      <table class = "table-borderless" id="feedTable">
+      <table class = "table-borderless" id="hashtagTable">
       </table>
     </div>
 
      <h4> Search tweets by Mentions </h4>
     <input class="form-control" type="text" id="mentionBox" placeholder="Enter the mention" required /><br/>
-     <button type="submit" class="btn btn-primary" id="hashtagBtn">Search Tweets</button><br/>
+     <button type="submit" class="btn btn-primary" id="mentionBtn">Search Tweets</button><br/>
     <div class="jumbotron" style="overflow:auto">
-      <table class = "table-borderless" id="feedTable" style="">
+      <table class = "table-borderless" id="mentionTable" style="">
       </table>
     </div>
   </div>
