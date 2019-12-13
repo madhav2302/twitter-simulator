@@ -21,6 +21,9 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser to
 
 ### Implemented Functionalities
 
+Implemented all the listed functionalities in a simulation for 100 users when the application starts.
+All the functionalities can also be accessed using the web interface.
+
 1. User Registration
 2. User Login
 3. Post tweet by a user
