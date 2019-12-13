@@ -17,10 +17,23 @@ defmodule TwitterSimulatorWeb.UserChannel do
   end
 
   def handle_in("login_user", payload, socket) do
-    Logger.info("#{inspect(socket)}")
     {isSuccess, message} = TwitterSimulator.Engine.login(payload["user"], payload["password"])
 
     if isSuccess do
+      TwitterSimulator.Engine.save_process_id(payload["user"], socket)
+      {:reply, {:ok, %{message: message}}, socket}
+    else
+      {:reply, {:error, %{message: message}}, socket}
+    end
+  end
+
+  def handle_in("tweet", payload, socket) do
+    username = payload["user"]
+    tweet = payload["tweet"]
+
+    {success, message} = TwitterSimulator.Engine.tweet(username, tweet)
+
+    if success do
       {:reply, {:ok, %{message: message}}, socket}
     else
       {:reply, {:error, %{message: message}}, socket}
@@ -30,5 +43,36 @@ defmodule TwitterSimulatorWeb.UserChannel do
   def handle_in("logout_user", payload, socket) do
     TwitterSimulator.Engine.logout(payload["user"])
     {:reply, {:ok, %{message: "Logout Successful"}}, socket}
+  end
+
+  def handle_in("follow_user", payload, socket) do
+    {isSuccess, message} =
+      TwitterSimulator.Engine.add_follower(payload["user"], payload["following"])
+
+    if isSuccess do
+      {:reply, {:ok, %{message: message}}, socket}
+    else
+      {:reply, {:error, %{message: message}}, socket}
+    end
+  end
+
+  def handle_in("query_by_hashtag", hashtag, socket) do
+    {isSuccess, result} = TwitterSimulator.Engine.query_by_hashtag(hashtag)
+
+    if isSuccess do
+      {:reply, {:ok, %{result: result}}, socket}
+    else
+      {:reply, {:error, %{result: result}}, socket}
+    end
+  end
+
+  def handle_in("query_by_mention", mention, socket) do
+    {isSuccess, result} = TwitterSimulator.Engine.query_by_mention(mention)
+
+    if isSuccess do
+      {:reply, {:ok, %{result: result}}, socket}
+    else
+      {:reply, {:error, %{result: result}}, socket}
+    end
   end
 end

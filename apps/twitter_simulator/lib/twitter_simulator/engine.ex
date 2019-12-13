@@ -18,26 +18,65 @@ defmodule TwitterSimulator.Engine do
     if is_user_registered(username) == false do
       {false, "user not registered"}
     else
-      if(TwitterSimulator.Server.isUserLoggedIn(username) === false) do
-        if(GenServer.call(:server, {:login_user, {username, password}}, :infinity)) do
-          Logger.debug("login successful for #{username}")
-          {true, "Login Successful"}
-        else
-          Logger.debug("Password incorrect")
-          {false, "Password incorrect"}
-        end
+      # if(TwitterSimulator.Server.isUserLoggedIn(username) === false) do
+      if(GenServer.call(:server, {:login_user, {username, password}}, :infinity)) do
+        Logger.debug("login successful for #{username}")
+        {true, "Login Successful"}
       else
-        Logger.debug("User #{username} is already logged in")
-        {false, "User is already logged in"}
+        Logger.debug("Password incorrect")
+        {false, "Password incorrect"}
       end
     end
+  end
+
+  @spec save_process_id(any, any) :: any
+  def save_process_id(username, process_id) do
+    TwitterSimulator.Server.save_process_id(username, process_id)
   end
 
   def logout(username) do
     GenServer.call(:server, {:logout, username}, :infinity)
   end
 
+  def tweet(username, tweet) do
+    {success, message} = GenServer.call(:server, {:tweet, {username, tweet, "tweet"}}, :infinity)
+
+    if success do
+      IO.puts("#{tweet} posted")
+      {true, "Tweet posted"}
+    else
+      {false, message}
+    end
+  end
+
   defp is_user_registered(username) do
     GenServer.call(:server, {:is_user_registered, username}, :infinity)
   end
+
+  def add_follower(username, follower) do
+    if GenServer.call(:server, {:add_follower, {username, follower}}) do
+      {true, "Followed Successfully"}
+    else
+      {false, "Error"}
+    end
+  end
+
+  def query_by_hashtag(hashtag) do
+    result = GenServer.call(:server, {:query_by_hashtag, hashtag})
+    if(result==[]) do
+      {false,result}
+    else
+      {true, result}
+    end
+  end
+
+  def query_by_mention(mention) do
+    result = GenServer.call(:server, {:query_by_mention, mention})
+    if(result=="mention not found") do
+      {false,result}
+    else
+      {true, result}
+    end
+  end
+
 end

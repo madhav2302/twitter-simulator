@@ -31,6 +31,8 @@ defmodule TwitterSimulator.Server do
     # stores tweetId,username,tweet
     :ets.new(:TweetById, [:set, :protected, :named_table])
     :ets.new(:SubscribedTo, [:set, :protected, :named_table])
+    # stores process id {username, process id}
+    :ets.new(:ProcessMapping, [:set, :protected, :named_table])
   end
 
   def handle_call({:show_followers, user}, _from, state) do
@@ -158,6 +160,11 @@ defmodule TwitterSimulator.Server do
     {:reply, Enum.filter(result, fn x -> String.contains?(x, search) end), state}
   end
 
+  def handle_call({:put_process_id, username, process_id}, _from, state) do
+    :ets.insert(:ProcessMapping, {username, process_id})
+    {:reply, state, state}
+  end
+
   # login callback
   def handle_call({:login_user, {username, password}}, _from, state) do
     case :ets.lookup(:Users, username) do
@@ -188,7 +195,7 @@ defmodule TwitterSimulator.Server do
     {:reply, true, state}
   end
 
-  def post_tweet_to_subscribers(tweet, tweetid, subscribers) do
+  def post_tweet_to_subscribers(tweet, from_user, subscribers) do
     Enum.each(subscribers, fn subscriber ->
       [listOfOldTweets] = :ets.lookup(:Notifications, subscriber)
       oldTweet = elem(listOfOldTweets, 1)
@@ -197,7 +204,11 @@ defmodule TwitterSimulator.Server do
       if isUserLoggedIn(subscriber) do
         IO.puts("#{subscriber} received tweet #{tweet}")
         :ets.insert(:Notifications, {subscriber, newTweet})
-        GenServer.cast(String.to_atom(subscriber), {:notify_tweet, tweet, tweetid})
+
+        Phoenix.Channel.push(:ets.lookup_element(:ProcessMapping, subscriber, 2), "notify", %{
+          tweet: tweet,
+          user: from_user
+        })
       end
     end)
   end
@@ -249,7 +260,8 @@ defmodule TwitterSimulator.Server do
 
   # return the logged in state , return true if logged in else returns false
   def isUserLoggedIn(username) do
-    IO.inspect :ets.tab2list(:UserState)
+    IO.inspect(:ets.tab2list(:UserState))
+
     if(
       :ets.lookup(:UserState, username) == [] ||
         :ets.lookup_element(:UserState, username, 2) == false
@@ -259,4 +271,13 @@ defmodule TwitterSimulator.Server do
       :ets.lookup_element(:UserState, username, 2)
     end
   end
+
+  def print_table(table) do
+    IO.inspect(:ets.tab2list(String.to_atom(table)))
+  end
+
+  def save_process_id(username, process_id) do
+    GenServer.call(:server, {:put_process_id, username, process_id})
+  end
+
 end
