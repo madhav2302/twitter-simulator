@@ -26,10 +26,14 @@ defmodule TwitterSimulator.Engine do
         Logger.debug("Password incorrect")
         {false, "Password incorrect"}
       end
+
+      # else
+      #   Logger.debug("User #{username} is already logged in")
+      #   {false, "User is already logged in"}
+      # end
     end
   end
 
-  @spec save_process_id(any, any) :: any
   def save_process_id(username, process_id) do
     TwitterSimulator.Server.save_process_id(username, process_id)
   end

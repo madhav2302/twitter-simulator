@@ -115,6 +115,7 @@ defmodule TwitterSimulator.Server do
   end
 
   def handle_call({:tweet, {userid, tweet, flag}}, _from, state) do
+    IO.puts("user - #{userid}, tweet - #{tweet}, flag - #{flag}")
     # check for retweet
     [listOfOldTweets] = :ets.lookup(:Tweets, userid)
     oldTweet = elem(listOfOldTweets, 1)
@@ -129,7 +130,7 @@ defmodule TwitterSimulator.Server do
           :ets.last(:TweetById) + 1
         end
 
-      post_tweet_to_subscribers(tweet, tweetid, messageOrMentions)
+      post_tweet_to_subscribers(tweet, userid, messageOrMentions)
 
       :ets.insert(:TweetById, {tweetid, userid, tweet})
 
@@ -139,7 +140,7 @@ defmodule TwitterSimulator.Server do
 
       subscribers = :ets.lookup_element(:Followers, userid, 2)
 
-      post_tweet_to_subscribers(tweet, tweetid, subscribers)
+      post_tweet_to_subscribers(tweet, userid, subscribers -- messageOrMentions)
 
       {:reply, {true, tweet}, state}
     else
@@ -260,8 +261,6 @@ defmodule TwitterSimulator.Server do
 
   # return the logged in state , return true if logged in else returns false
   def isUserLoggedIn(username) do
-    IO.inspect(:ets.tab2list(:UserState))
-
     if(
       :ets.lookup(:UserState, username) == [] ||
         :ets.lookup_element(:UserState, username, 2) == false
@@ -279,5 +278,4 @@ defmodule TwitterSimulator.Server do
   def save_process_id(username, process_id) do
     GenServer.call(:server, {:put_process_id, username, process_id})
   end
-
 end
