@@ -34,7 +34,7 @@
  <button type="submit" class="btn btn-primary" id="logout">Logout</button>
   <br/>
   <div class="col-sm-4">
-    <h3> <%= gettext "Welcome User"%></h3>
+    <h3> Welcome <span id="welcome_name"></span></h3>
     <br/>
     <h4> Follow Another User </h4>
     <input class="form-control" type="text" id="followerBox" placeholder="Enter the username" required /><br/>
@@ -62,9 +62,10 @@
     <button type="submit" class="btn btn-primary" id="tweetBtn">Post Tweet</button>
     <br/><br/>
     <h4> Feed </h4> <br>
-    <div class="jumbotron" style="overflow:auto">
-      <table class = "table-borderless" id="feedTable" style="height:450px;">
-      </table>
+    <div class="jumbotron" style="overflow: scroll;height: 500px;padding: 30px;">
+      <ul id = "ul" style="color: black; list-style-type: none; text-align: left;">
+        
+      </ul>
     </div>
   </div>
 </div>

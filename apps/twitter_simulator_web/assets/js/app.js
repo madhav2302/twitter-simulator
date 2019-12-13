@@ -22,11 +22,18 @@ channel.join()
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 $(document).ready(function () {
+  channel.on('notify', function (payload) {
+    $("#ul").append("<li> user  :" + payload.user + ", tweet : " + payload.tweet + "</li>")
+    console.log(payload)
+  })
+
   var login = $("#login")
+  var welocomeName = $("#welcome_name")
   var logout = $("#logout")
   var signup = $("#signup")
   var dashboardContainer = $("#dashboardContainer")
   var loginContainer = $("#loginContainer")
+  var tweetBtn = $("#tweetBtn")
 
   login.click(function () {
     let username = $("#username").val()
@@ -35,7 +42,9 @@ $(document).ready(function () {
       channel.push("login_user", { user: username, password: password })
         .receive("ok", resp => {
           window.userToken = username
+          welocomeName.text(username)
           console.log(resp["message"])
+          
           loginContainer.css('display', 'none')
           dashboardContainer.css('display', 'block')
         })
@@ -69,6 +78,25 @@ $(document).ready(function () {
         .receive("error", resp => { alert(resp["message"]) })
     } else {
       alert("Please fill username and password")
+    }
+  })
+
+  tweetBtn.click(function () {
+    let tweet = $("#tweetBox").val()
+
+    if (tweet) {
+      channel.push("tweet", { user: window.userToken, tweet: tweet })
+        .receive("ok", resp => {
+          console.log(resp)
+          $("#ul").append("<li>" + tweet + "</li>")
+        })
+        .receive("error", resp => {
+          alert(resp["message"])
+        })
+      console.log("Tweeting " + tweet)
+      $("#tweetBox").val('')
+    } else {
+      alert("Tweet empty")
     }
   })
 

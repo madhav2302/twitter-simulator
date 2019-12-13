@@ -109,21 +109,12 @@ defmodule TwitterSimulator.Client do
     if is_user_registered(username) == false do
       {false, "user not registered"}
     else
-      currentUserState = GenServer.call(:server, {:is_logged_in, username}, :infinity)
-      # not logged in
-      if(currentUserState == false) do
-        ret = GenServer.call(:server, {:login_user, {username, password}}, :infinity)
-
-        if(ret == true) do
-          IO.puts("login successful for #{username}")
-          {true, "Login Successful"}
-        else
-          IO.puts("Password incorrect")
-          {false, "Password incorrect"}
-        end
+      if(GenServer.call(:server, {:login_user, {username, password}}, :infinity)) do
+        IO.puts("login successful for #{username}")
+        {true, "Login Successful"}
       else
-        IO.puts("User #{username} already logged in")
-        {false, "User is already logged in"}
+        IO.puts("Password incorrect")
+        {false, "Password incorrect"}
       end
     end
   end
@@ -158,17 +149,17 @@ defmodule TwitterSimulator.Client do
   end
 
   def handle_cast({:start_toggle}, state) do
-    IO.puts "Start Toggle"
+    IO.puts("Start Toggle")
     send(self(), {:toggle})
     {:noreply, state}
   end
 
   def handle_info({:toggle}, {user, _tweets}) do
     if Server.isUserLoggedIn("user#{user}") do
-      IO.puts "Logout in between"
+      IO.puts("Logout in between")
       GenServer.call(:server, {:logout, "user#{user}"}, :infinity)
     else
-      IO.puts "Login in between"
+      IO.puts("Login in between")
       GenServer.call(:server, {:login_user, {"user#{user}", "pass#{user}"}}, :infinity)
     end
 
