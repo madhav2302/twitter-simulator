@@ -20,13 +20,15 @@ defmodule TwitterSimulatorWeb.UserChannel do
     Logger.info("#{inspect(socket)}")
     {isSuccess, message} = TwitterSimulator.Engine.login(payload["user"], payload["password"])
 
-    Logger.info("Trying to login")
-
     if isSuccess do
-      socket = assign(socket, :user, payload["user"])
       {:reply, {:ok, %{message: message}}, socket}
     else
       {:reply, {:error, %{message: message}}, socket}
     end
+  end
+
+  def handle_in("logout_user", payload, socket) do
+    TwitterSimulator.Engine.logout(payload["user"])
+    {:reply, {:ok, %{message: "Logout Successful"}}, socket}
   end
 end

@@ -18,9 +18,7 @@ defmodule TwitterSimulator.Engine do
     if is_user_registered(username) == false do
       {false, "user not registered"}
     else
-      currentUserState = GenServer.call(:server, {:is_logged_in, username}, :infinity)
-
-      if(currentUserState == false) do
+      if(TwitterSimulator.Server.isUserLoggedIn(username) === false) do
         if(GenServer.call(:server, {:login_user, {username, password}}, :infinity)) do
           Logger.debug("login successful for #{username}")
           {true, "Login Successful"}
@@ -29,10 +27,14 @@ defmodule TwitterSimulator.Engine do
           {false, "Password incorrect"}
         end
       else
-        Logger.debug("User #{username} already logged in")
+        Logger.debug("User #{username} is already logged in")
         {false, "User is already logged in"}
       end
     end
+  end
+
+  def logout(username) do
+    GenServer.call(:server, {:logout, username}, :infinity)
   end
 
   defp is_user_registered(username) do

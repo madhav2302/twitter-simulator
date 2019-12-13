@@ -184,12 +184,8 @@ defmodule TwitterSimulator.Server do
 
   # logout
   def handle_call({:logout, username}, _from, state) do
-    if(isUserLoggedIn(username) == true) do
-      :ets.insert(:UserState, {username, false})
-      {:reply, true, state}
-    else
-      {:reply, false, state}
-    end
+    :ets.insert(:UserState, {username, false})
+    {:reply, true, state}
   end
 
   def post_tweet_to_subscribers(tweet, tweetid, subscribers) do
@@ -253,6 +249,7 @@ defmodule TwitterSimulator.Server do
 
   # return the logged in state , return true if logged in else returns false
   def isUserLoggedIn(username) do
+    IO.inspect :ets.tab2list(:UserState)
     if(
       :ets.lookup(:UserState, username) == [] ||
         :ets.lookup_element(:UserState, username, 2) == false

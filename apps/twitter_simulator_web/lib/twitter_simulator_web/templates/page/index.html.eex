@@ -5,9 +5,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body style="background-color:#DEEAF3;align:center">
-<div class="container" height="100%" width="100%" style="color:white">
 <div id="loginContainer" style="background-color:#8AC6F4;">
-  <center><h2><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
+  <center><h2 style="padding-top: 100px;"><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
   <p class="lead"></p>
   <img class="img-responsive" src="https://pbs.twimg.com/profile_images/1111729635610382336/_65QFl7B.png" height="100" width="100">
   <br><br>
@@ -16,10 +15,10 @@
   <br>
   <form class="form-group">
     <label for="text">Username</label>
-    <input type="text" class="form-control" placeholder="Enter username" id="username" required="true" />
+    <input type="text" class="form-control" style="width: 25%;" placeholder="Enter username" id="username" required="true" />
     <br>
     <label for="pwd">Password</label>
-    <input type="password" class="form-control" placeholder="Enter password" id="password" required="true" />
+    <input type="password" class="form-control" style="width: 25%;" placeholder="Enter password" id="password" required="true" />
   </form>
   <br/> <br/>
   <button type="submit" class="btn btn-primary" id="login">Login</button>
@@ -31,7 +30,7 @@
 <!-- DASHBOARD -->
 <div id="dashboardContainer" class="row" class="container text-black" style="background-color:#8AC6F4;display:none">
 <center><h2><%= gettext "Welcome to %{name}", name: "Twitter Simulator!" %></h2>
- <button type="submit" class="btn btn-primary" id="logoutBtn" onclick="logout()">Logout</button>
+ <button type="submit" class="btn btn-primary" id="logout">Logout</button>
   <br/>
   <div class="col-sm-4">
     <h3> <%= gettext "Welcome User"%></h3>
