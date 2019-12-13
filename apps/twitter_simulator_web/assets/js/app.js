@@ -42,7 +42,7 @@ $(document).ready(function () {
       channel.push("login_user", { user: username, password: password })
         .receive("ok", resp => {
           window.userToken = username
-          welocomeName.text(username)
+          welocomeName.text(username + "!")
           console.log(resp["message"])
 
           loginContainer.css('display', 'none')
@@ -127,7 +127,7 @@ $(document).ready(function () {
       channel.push("follow_user", { user: username, following: followUsername })
         .receive("ok", resp => {
           alert(resp["message"])
-          follow.val('')
+          $("#followerBox").val('')
         })
         .receive("error", resp => { alert(resp["message"]) })
     } else {
