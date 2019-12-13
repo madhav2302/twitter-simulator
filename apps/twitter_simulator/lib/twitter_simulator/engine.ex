@@ -46,8 +46,7 @@ defmodule TwitterSimulator.Engine do
     {success, message} = GenServer.call(:server, {:tweet, {username, tweet, "tweet"}}, :infinity)
 
     if success do
-      IO.puts("#{tweet} posted")
-      {true, "Tweet posted"}
+      {true, message}
     else
       {false, message}
     end
@@ -58,29 +57,41 @@ defmodule TwitterSimulator.Engine do
   end
 
   def add_follower(username, follower) do
-    if GenServer.call(:server, {:add_follower, {username, follower}}) do
-      {true, "Followed Successfully"}
-    else
-      {false, "Error"}
-    end
+    GenServer.call(:server, {:add_follower, {username, follower}})
   end
 
   def query_by_hashtag(hashtag) do
     result = GenServer.call(:server, {:query_by_hashtag, hashtag})
-    if(result==[]) do
-      {false,result}
+
+    if(result == []) do
+      {false, result}
     else
       {true, result}
+    end
+  end
+
+  def retweet(username, tweet_id) do
+    [{_tweet_id, user, tweet, _time}] = :ets.lookup(:TweetById, String.to_integer(tweet_id))
+
+    {success, message} =
+      GenServer.call(:server, {:tweet, {username, tweet, "retweet"}}, :infinity)
+
+    if success do
+      tweet = user <> ": " <> Map.get(message, :tweet)
+      message = Map.put(message, :tweet, tweet)
+      {true, message}
+    else
+      {false, message}
     end
   end
 
   def query_by_mention(mention) do
     result = GenServer.call(:server, {:query_by_mention, mention})
-    if(result=="mention not found") do
-      {false,result}
+
+    if(result == []) do
+      {false, "mention not found"}
     else
       {true, result}
     end
   end
-
 end

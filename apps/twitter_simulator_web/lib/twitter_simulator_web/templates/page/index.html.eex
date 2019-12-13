@@ -41,17 +41,17 @@
      <button type="submit" class="btn btn-primary" id="followBtn">Follow User</button><br/><br/>
      <br/>
      
-     <h4> Search tweets by Hashtags </h4>
+     <h4> Search tweets by Hashtag </h4>
     <input class="form-control" type="text" id="hashtagBox" placeholder="Enter the hashtag" required /><br/>
-     <button type="submit" class="btn btn-primary" id="hashtagBtn">Search Tweets</button><br/><br/>
-    <div class="jumbotron" style="height:100px;overflow:auto;">
+     <button type="submit" class="btn btn-primary" id="hashtagBtn">Search tweets by Hashtag</button><br/><br/>
+    <div class="jumbotron" style="height:100px;overflow:auto;padding: 0px;">
       <table class = "table" id="hashtagTable">
       </table>
     </div>
     <br/>
      <h4> Search tweets by Mentions </h4>
-     <button type="submit" class="btn btn-primary" id="mentionBtn">Search Tweets</button><br/><br/>
-    <div class="jumbotron" style="height:100px;overflow:auto;">
+     <button type="submit" class="btn btn-primary" id="mentionBtn">Search tweets by Mentions</button><br/><br/>
+    <div class="jumbotron" style="height:100px;overflow:auto;padding: 0px;">
       <table class = "table" id="mentionTable">
       </table>
     </div>
@@ -62,9 +62,12 @@
     <button type="submit" class="btn btn-primary" id="tweetBtn">Post Tweet</button>
     <br/><br/>
     <h4> Feed </h4> <br>
-    <div class="jumbotron" style="overflow: scroll;height: 500px;padding: 30px;">
+    <div class="jumbotron" style="overflow: scroll;height: 500px;padding: 15px;">
       <ul id = "ul" style="color: black; list-style-type: none; text-align: left;">
       </ul>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary" id="retweetBtn">Re-Tweet</button>
     </div>
   </div>
 </div>

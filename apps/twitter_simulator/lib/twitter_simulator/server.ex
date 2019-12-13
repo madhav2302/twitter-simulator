@@ -40,24 +40,24 @@ defmodule TwitterSimulator.Server do
   end
 
   def handle_call({:add_follower, {username, follower}}, _from, state) do
-    if Enum.member?(:ets.lookup_element(:SubscribedTo, follower, 2), username) do
-      {:reply, {false, "Already Subscribed"}, state}
+    if :ets.member(:Users, username) do
+      if Enum.member?(:ets.lookup_element(:SubscribedTo, follower, 2), username) do
+        {:reply, {false, "Already Subscribed"}, state}
+      else
+        [subscribedList] = :ets.lookup(:SubscribedTo, follower)
+        oldsubscriber = elem(subscribedList, 1)
+        newsubscriber = [username | oldsubscriber]
+        :ets.insert(:SubscribedTo, {follower, newsubscriber})
+
+        [listOfFollowers] = :ets.lookup(:Followers, username)
+        oldFollower = elem(listOfFollowers, 1)
+        newFollower = [follower | oldFollower]
+        :ets.insert(:Followers, {username, newFollower})
+        {:reply, {true, "Successfuly following"}, state}
+      end
     else
-      [subscribedList] = :ets.lookup(:SubscribedTo, follower)
-      oldsubscriber = elem(subscribedList, 1)
-      newsubscriber = [username | oldsubscriber]
-      :ets.insert(:SubscribedTo, {follower, newsubscriber})
-
-      [listOfFollowers] = :ets.lookup(:Followers, username)
-      oldFollower = elem(listOfFollowers, 1)
-      newFollower = [follower | oldFollower]
-      :ets.insert(:Followers, {username, newFollower})
-      {:reply, {true, "Success"}, state}
+      {:reply, {false, "User #{username} not available"}, state}
     end
-  end
-
-  def handle_call({:get_tweet_by_id, tweet_id}, _from, state) do
-    {:reply, :ets.lookup_element(:TweetById, tweet_id, 3), state}
   end
 
   # register callback
@@ -108,57 +108,37 @@ defmodule TwitterSimulator.Server do
 
   def handle_call({:query_by_mention, mention}, _from, state) do
     if :ets.lookup(:Mentions, mention) == [] do
-      {:reply, "mention not found", state}
+      {:reply, [], state}
     else
       {:reply, :ets.lookup_element(:Mentions, mention, 2), state}
     end
   end
 
   def handle_call({:tweet, {userid, tweet, flag}}, _from, state) do
-    IO.puts("user - #{userid}, tweet - #{tweet}, flag - #{flag}")
     # check for retweet
-    [listOfOldTweets] = :ets.lookup(:Tweets, userid)
-    oldTweet = elem(listOfOldTweets, 1)
-    newTweet = [tweet | oldTweet]
     {all_registered, messageOrMentions} = process_tweet(tweet)
 
     if all_registered do
-      tweetid =
-        if(:ets.first(:TweetById) == :"$end_of_table") do
-          1
-        else
-          :ets.last(:TweetById) + 1
-        end
+      tweetid = (:ets.tab2list(:TweetById) |> length) + 1
+      now = DateTime.utc_now()
+      :ets.insert(:TweetById, {tweetid, userid, tweet, now})
 
-      post_tweet_to_subscribers(tweet, userid, messageOrMentions)
-
-      :ets.insert(:TweetById, {tweetid, userid, tweet})
+      oldTweet = :ets.lookup_element(:Tweets, userid, 2)
+      newTweet = [tweet | oldTweet]
 
       oldFlags = :ets.lookup_element(:Tweets, userid, 3)
       newFlag = [flag | oldFlags]
       :ets.insert(:Tweets, {userid, newTweet, newFlag})
 
+      post_tweet_to_subscribers(tweetid, messageOrMentions)
+
       subscribers = :ets.lookup_element(:Followers, userid, 2)
+      post_tweet_to_subscribers(tweetid, subscribers -- messageOrMentions)
 
-      post_tweet_to_subscribers(tweet, userid, subscribers -- messageOrMentions)
-
-      {:reply, {true, tweet}, state}
+      {:reply, {true, toMap(tweetid, tweet, userid, now)}, state}
     else
       {:reply, {false, messageOrMentions}, state}
     end
-  end
-
-  def handle_call({:query_by_subscribed_user, user, search}, _from, state) do
-    result =
-      Enum.reduce(
-        Enum.map(:ets.lookup_element(:SubscribedTo, user, 2), fn user ->
-          :ets.lookup_element(:Tweets, user, 2)
-        end),
-        [],
-        fn tweets, acc -> tweets ++ acc end
-      )
-
-    {:reply, Enum.filter(result, fn x -> String.contains?(x, search) end), state}
   end
 
   def handle_call({:put_process_id, username, process_id}, _from, state) do
@@ -185,18 +165,15 @@ defmodule TwitterSimulator.Server do
     end
   end
 
-  # get tweets callback
-  def handle_call({:get_tweets, {username}}, _from, state) do
-    {:reply, :ets.lookup_element(:Tweets, username, 2), state}
-  end
-
   # logout
   def handle_call({:logout, username}, _from, state) do
     :ets.insert(:UserState, {username, false})
     {:reply, true, state}
   end
 
-  def post_tweet_to_subscribers(tweet, from_user, subscribers) do
+  def post_tweet_to_subscribers(tweetid, subscribers) do
+    [{tweetid, from_user, tweet, now}] = :ets.lookup(:TweetById, tweetid)
+    subscribers = subscribers -- [from_user]
     Enum.each(subscribers, fn subscriber ->
       [listOfOldTweets] = :ets.lookup(:Notifications, subscriber)
       oldTweet = elem(listOfOldTweets, 1)
@@ -206,10 +183,7 @@ defmodule TwitterSimulator.Server do
         IO.puts("#{subscriber} received tweet #{tweet}")
         :ets.insert(:Notifications, {subscriber, newTweet})
 
-        Phoenix.Channel.push(:ets.lookup_element(:ProcessMapping, subscriber, 2), "notify", %{
-          tweet: tweet,
-          user: from_user
-        })
+        Phoenix.Channel.push(:ets.lookup_element(:ProcessMapping, subscriber, 2), "notify", toMap(tweetid, tweet, from_user, now))
       end
     end)
   end
@@ -277,5 +251,14 @@ defmodule TwitterSimulator.Server do
 
   def save_process_id(username, process_id) do
     GenServer.call(:server, {:put_process_id, username, process_id})
+  end
+
+  defp toMap(tweetid, tweet, user, time) do
+    %{
+      tweetid: tweetid,
+      tweet: tweet,
+      user: user,
+      time: time
+    }
   end
 end

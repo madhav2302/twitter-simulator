@@ -47,7 +47,7 @@ defmodule TwitterSimulatorWeb.UserChannel do
 
   def handle_in("follow_user", payload, socket) do
     {isSuccess, message} =
-      TwitterSimulator.Engine.add_follower(payload["user"], payload["following"])
+      TwitterSimulator.Engine.add_follower(payload["following"], payload["user"])
 
     if isSuccess do
       {:reply, {:ok, %{message: message}}, socket}
@@ -73,6 +73,20 @@ defmodule TwitterSimulatorWeb.UserChannel do
       {:reply, {:ok, %{result: result}}, socket}
     else
       {:reply, {:error, %{result: result}}, socket}
+    end
+  end
+
+  def handle_in("retweet", payload, socket) do
+    IO.puts "Into retweet"
+    username = payload["user"]
+    tweet_id = payload["tweet_id"]
+
+    {success, message} = TwitterSimulator.Engine.retweet(username, tweet_id)
+
+    if success do
+      {:reply, {:ok, %{message: message}}, socket}
+    else
+      {:reply, {:error, %{message: message}}, socket}
     end
   end
 end

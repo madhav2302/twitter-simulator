@@ -21,102 +21,113 @@ channel.join()
   .receive("ok", resp => { console.log("Joined successfully", resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
-  $(document).ready(function () {
-    channel.on('notify', function (payload) {
-      $("#ul").append("<li> user  :" + payload.user + ", tweet : " + payload.tweet + "</li>")
-      console.log(payload)
-    })
-  
-    var login = $("#login")
-    var welocomeName = $("#welcome_name")
-    var logout = $("#logout")
-    var signup = $("#signup")
-    var dashboardContainer = $("#dashboardContainer")
-    var loginContainer = $("#loginContainer")
-    var tweetBtn = $("#tweetBtn")
-  
-    login.click(function () {
-      let username = $("#username").val()
-      let password = $("#password").val()
-      if (username && password) {
-        channel.push("login_user", { user: username, password: password })
-          .receive("ok", resp => {
-            window.userToken = username
-            welocomeName.text(username)
-            console.log(resp["message"])
-            
-            loginContainer.css('display', 'none')
-            dashboardContainer.css('display', 'block')
-          })
-          .receive("error", resp => { alert(resp["message"]) })
-      } else {
-        alert("Please fill username and password")
-      }
-    })
-  
-    logout.click(function () {
-      console.log("Logging out")
-      channel.push("logout_user", { user: window.userToken })
+$(document).ready(function () {
+  channel.on('notify', function (payload) {
+    $("#ul").append(createLi(payload))
+    console.log(payload)
+  })
+
+  var login = $("#login")
+  var welocomeName = $("#welcome_name")
+  var logout = $("#logout")
+  var signup = $("#signup")
+  var dashboardContainer = $("#dashboardContainer")
+  var loginContainer = $("#loginContainer")
+  var tweetBtn = $("#tweetBtn")
+
+  login.click(function () {
+    let username = $("#username").val()
+    let password = $("#password").val()
+    if (username && password) {
+      channel.push("login_user", { user: username, password: password })
         .receive("ok", resp => {
-          console.log(resp)
-          resetContents()
-        }).receive(
-          "error", resp => {
-            console.log(resp)
-          }
-        )
-    })
-  
-    signup.click(function () {
-      let username = $("#username").val()
-      let password = $("#password").val()
-      if (username && password) {
-        channel.push("register_user", { user: username, password: password })
-          .receive("ok", resp => {
-            alert(resp["message"])
-          })
-          .receive("error", resp => { alert(resp["message"]) })
-      } else {
-        alert("Please fill username and password")
-      }
-    })
-  
-    tweetBtn.click(function () {
-      let tweet = $("#tweetBox").val()
-  
-      if (tweet) {
-        channel.push("tweet", { user: window.userToken, tweet: tweet })
-          .receive("ok", resp => {
-            console.log(resp)
-            $("#ul").append("<li>" + tweet + "</li>")
-          })
-          .receive("error", resp => {
-            alert(resp["message"])
-          })
-        console.log("Tweeting " + tweet)
-        $("#tweetBox").val('')
-      } else {
-        alert("Tweet empty")
-      }
-    })
-  
-    function resetContents() {
-      window.userToken = null
-      $("#username").val('')
-      $("#password").val('')
-      dashboardContainer.css('display', 'none')
-      loginContainer.css('display', 'block')
+          window.userToken = username
+          welocomeName.text(username)
+          console.log(resp["message"])
+
+          loginContainer.css('display', 'none')
+          dashboardContainer.css('display', 'block')
+        })
+        .receive("error", resp => { alert(resp["message"]) })
+    } else {
+      alert("Please fill username and password")
     }
   })
-  
+
+  logout.click(function () {
+    console.log("Logging out")
+    channel.push("logout_user", { user: window.userToken })
+      .receive("ok", resp => {
+        console.log(resp)
+        location.reload()
+      }).receive(
+        "error", resp => {
+          console.log(resp)
+        }
+      )
+  })
+
+  signup.click(function () {
+    let username = $("#username").val()
+    let password = $("#password").val()
+    if (username && password) {
+      channel.push("register_user", { user: username, password: password })
+        .receive("ok", resp => {
+          alert(resp["message"])
+        })
+        .receive("error", resp => { alert(resp["message"]) })
+    } else {
+      alert("Please fill username and password")
+    }
+  })
+
+  function createLi(map) {
+    var li = '<li>' +
+      '<div style="display: inline-block; width: 25%;">' + new Date(map.time).toLocaleString() + '</div>'
+      + '<div style="display: inline-block; width: 60%;">' + map.user + ': ' + map.tweet + '</div>'
+
+    if (map.user !== window.userToken) {
+      li = li + '<div style="display: inline-block; width: 10%;">'
+        + '<input type="radio" name="retweet_id" value="' + map.tweetid + '">'
+        + '</div>'
+    }
+
+    li += '</li>'
+
+    return li;
+  }
+
+  tweetBtn.click(function () {
+    let tweet = $("#tweetBox").val()
+
+    if (tweet) {
+      channel.push("tweet", { user: window.userToken, tweet: tweet })
+        .receive("ok", resp => {
+          // console.log(resp)
+          $("#ul").append(createLi(resp.message))
+          $("#tweetBox").val('')
+        })
+        .receive("error", resp => {
+          alert(resp["message"])
+        })
+      console.log("Tweeting " + tweet)
+
+    } else {
+      alert("Tweet empty")
+    }
+  })
+
   var follow = $("#followBtn")
   follow.click(function () {
-    let username = $("#username").val()
+    let username = window.userToken
     let followUsername = $("#followerBox").val()
-    if (followUsername) {
+    if (followUsername === username) {
+      alert("Cannot follow to self")
+    } else if (followUsername) {
       channel.push("follow_user", { user: username, following: followUsername })
         .receive("ok", resp => {
           alert(resp["message"])
+          follow.val('')
         })
         .receive("error", resp => { alert(resp["message"]) })
     } else {
@@ -186,10 +197,24 @@ channel.join()
     }
   });
 
+  var retweet = $("#retweetBtn")
+  retweet.click(function () {
+    var tweetid = $('input[name=retweet_id]:checked').val()
 
+    if (tweetid) {
+      channel.push("retweet", { user: window.userToken, tweet_id: tweetid })
+        .receive("ok", resp => {
+          console.log(resp)
+          $("#ul").append(createLi(resp.message))
+          $('input[name=retweet_id]:checked').prop('checked', false)
+        }).receive("error", resp => {
+          alert(resp.message)
+        })
 
-
-
-
-
+    } else {
+      alert("Please select tweet to retweet")
+    }
+    console.log()
+  })
+})
 
