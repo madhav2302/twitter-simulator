@@ -1,7 +1,7 @@
 # TwitterSimulatorWeb
 
 Twitter simulator in elixir with web interface written in HTML and JS.
-Please check the video demo of the functionalities (https://youtu.be/zZnRoKCYuj8)
+##Please check the video demo of the functionalities (https://youtu.be/zZnRoKCYuj8)
 
 ### Group Members
 1.   Madhav Sodhani       :     1988-9109 
