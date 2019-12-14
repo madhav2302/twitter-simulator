@@ -1,6 +1,7 @@
 # TwitterSimulatorWeb
 
 Twitter simulator in elixir with web interface written in HTML and JS.
+Please check the video demo of the functionalities (https://youtu.be/zZnRoKCYuj8)
 
 ### Group Members
 1.   Madhav Sodhani       :     1988-9109 
@@ -9,9 +10,9 @@ Twitter simulator in elixir with web interface written in HTML and JS.
 ### Steps to run the project:
 
 To start your Phoenix server:
-
+  * unzip the project and `cd twitter-simulator`
   * Install dependencies with `mix deps.get`
-  * Install Node.js dependencies with `cd assets && npm install`
+  * Install Node.js dependencies with `cd twitter-simulator/apps/twitter_simulator_web/assets` followed by `npm install`
   * Start Phoenix endpoint with `mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser to view the web interface.
@@ -23,6 +24,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser to
 
 Implemented all the listed functionalities in a simulation for 100 users when the application starts.
 The simulation registers 100 users which post tweets with hashtags and mentions. All the functionalities can also be accessed using the web interface.
+Please check the video demo of the functionalities https://youtu.be/zZnRoKCYuj8 
 
 1. User Registration
 2. User Login
